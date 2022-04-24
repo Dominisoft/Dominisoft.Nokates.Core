@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dominisoft.Nokates.Common" Version="1.0.4" />
+    <PackageReference Include="Dominisoft.Nokates.Common" Version="1.0.18" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Dominisoft.Nokates.Core.Client\Dominisoft.Nokates.Core.Client.csproj" />
   </ItemGroup>
 </Project>

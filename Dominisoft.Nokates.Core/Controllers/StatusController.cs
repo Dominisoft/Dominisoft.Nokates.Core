@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using Dominisoft.Nokates.Common.Infrastructure.Attributes;
 using Dominisoft.Nokates.Common.Infrastructure.Helpers;
 using Dominisoft.Nokates.Common.Models;
 using Dominisoft.Nokates.Core.Infrastructure;
@@ -11,12 +13,22 @@ namespace Dominisoft.Nokates.Core.Controllers
     public class StatusController : ControllerBase
     {
         [HttpGet("")]
-        public ActionResult<ServiceStatus[]> Get()
+        [EndpointGroup("System Admin")]
+        public ActionResult<ServiceStatus[]> GetAllServiceStatuses()
         {
-            var StatusResults = ServiceStatusHelper.GetServices(AppHelper.GetRootUri());
-            return StatusResults.ToArray();
+            var root = AppHelper.GetRootUri();
+            var paths = ServiceStatusHelper.GetApplicationStatusPagePaths(root);
+            var results = new List<ServiceStatus>();
+            foreach (var path in paths)
+            {
+                var status = ServiceStatusHelper.GetStatus(path);
+                results.Add(status);
+            }
+
+            return results.ToArray();
         }
         [HttpGet("EndpointGroups")]
+        [EndpointGroup("System Admin")]
         public ActionResult<Dictionary<string, List<string>>> GetEndpointGroups()
         {
             return ServiceStatusHelper.GetGroups($"{Request.Scheme}://{Request.Host.Value}/");

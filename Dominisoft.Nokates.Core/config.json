@@ -1,0 +1,6 @@
+{
+  "MetricsConnectionString": "Data Source=Localhost;User ID=Microservice;Password=Password;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False",
+  "AllowPassthroughOnUnknownEndpoints": "false",
+  "ServiceAccountUsername": "ServiceLogin",
+  "ServiceAccountPassword": "serviceAccountPassword"
+}

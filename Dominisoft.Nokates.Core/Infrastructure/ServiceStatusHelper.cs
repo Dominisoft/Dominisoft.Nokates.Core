@@ -16,19 +16,20 @@ namespace Dominisoft.Nokates.Core.Infrastructure
         public static List<ServiceStatus> GetServices(string root)
         {
             var paths = GetApplicationStatusPagePaths(root);
-            return paths.Select(path => Task.Run(() => GetStatus(path)).Result).ToList();
+            return paths.Select(GetStatus).ToList();
         }
 
 
-        private static async Task<ServiceStatus> GetStatus(string path)
+        public static ServiceStatus GetStatus(string path)
         {
             var name = "";
             try
             {
+                var token = ConfigurationValues.Token;
                 var parts = path.Split("/").ToList();
                 var index = parts.IndexOf("Nokates") - 1;
                 name = parts[index];
-                var result = await Get<ServiceStatus>(path);
+                var result = Get<ServiceStatus>(path);
                 result.Uri = path;
                 if (result.Name == null)
                     throw new Exception("Failed to get service status");
@@ -39,7 +40,7 @@ namespace Dominisoft.Nokates.Core.Infrastructure
                 StatusValues.EventLog.Add(new LogEntry
                 {
                     Date = DateTime.Now,
-                    Message = e.Message,
+                    Message = e.Message+"\r\n"+e.StackTrace,
                     Source = "Dominisoft.Nokates.Core"
                 });
                 Console.WriteLine(e);
@@ -57,27 +58,23 @@ namespace Dominisoft.Nokates.Core.Infrastructure
         public static Dictionary<string, List<string>> GetGroups(string root)
         {
             var paths = GetApplicationEndpointGroupsPagePaths(root);
-            var groups = paths.Select(path => Get<Dictionary<string, List<string>>>(path).Result).ToArray();
+            var groups = paths.Select(Get<Dictionary<string, List<string>>>).ToArray();
             return new Dictionary<string, List<string>>().UnionValues(groups);
         }
 
-        private static async Task<TReturn> Get<TReturn>(string path) where TReturn : new()
-        {
-            var authClient = new AuthenticationClient("http://localhost/Identity/Authentication");
-            var token = await authClient.GetToken("", "");
-            return HttpHelper.Get<TReturn>(path, token);
-        }
+        private static TReturn Get<TReturn>(string path)
+            => HttpHelper.Get<TReturn>(path,ConfigurationValues.Token);
 
-        private static List<string> GetApplicationStatusPagePaths(string root)
+        internal static List<string> GetApplicationStatusPagePaths(string root)
         {
-            var appPaths = Paths();
+            var appPaths = GetServicePaths();
 
             return appPaths.Select(path => $"{root}{path}/Nokates/ServiceStatus").ToList();
 
         }
-        private static List<string> GetApplicationEndpointGroupsPagePaths(string root)
+        internal static List<string> GetApplicationEndpointGroupsPagePaths(string root)
         {
-            var appPaths = Paths();
+            var appPaths = GetServicePaths();
 
             return appPaths.Select(path => $"{root}{path}/Nokates/EndpointGroups").ToList();
 
@@ -91,7 +88,7 @@ namespace Dominisoft.Nokates.Core.Infrastructure
             return site.Name;
 
         }
-        private static string[] Paths()
+        internal static string[] GetServicePaths()
         {
             var apps = AppHelper.GetApps();
             var rootName = AppHelper.GetAppName();

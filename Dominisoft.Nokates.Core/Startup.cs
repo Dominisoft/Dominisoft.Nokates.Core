@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Timers;
+using Dominisoft.Nokates.Common.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server.Features;
@@ -28,6 +29,8 @@ namespace Dominisoft.Nokates.Core
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddNokates(configFile: "./config.json");
+
             services.AddControllers();
         }
         private static void SetTimer(int minutes)
@@ -59,10 +62,8 @@ namespace Dominisoft.Nokates.Core
             
             app.UseHttpsRedirection();
 
-            app.UseRouting();
-
-            app.UseAuthorization();
-
+            app.UseNokates();
+            
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
