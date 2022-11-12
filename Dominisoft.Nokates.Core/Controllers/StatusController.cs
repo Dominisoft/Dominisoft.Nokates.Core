@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mime;
 using Dominisoft.Nokates.Common.Infrastructure.Attributes;
+using Dominisoft.Nokates.Common.Infrastructure.Configuration;
 using Dominisoft.Nokates.Common.Infrastructure.Helpers;
 using Dominisoft.Nokates.Common.Models;
 using Dominisoft.Nokates.Core.Infrastructure;
@@ -33,5 +35,14 @@ namespace Dominisoft.Nokates.Core.Controllers
         {
             return ServiceStatusHelper.GetGroups($"{Request.Scheme}://{Request.Host.Value}/");
         }
+
+        [HttpGet("favicon.ico")]
+        [NoAuth]
+        public FileContentResult GetFavIcon()
+        {
+             ConfigurationValues.Values.TryGetValue("IconPath", out var path);
+             return new FileContentResult(System.IO.File.ReadAllBytes(path ?? "./favicon.ico"), "image/x-icon");
+        }
+
     }
 }

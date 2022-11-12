@@ -26,6 +26,13 @@ namespace Dominisoft.Nokates.Core.Infrastructure
             try
             {
                 var token = ConfigurationValues.Token;
+                StatusValues.EventLog.Add(new LogEntry
+                {
+                    Date = DateTime.Now,
+                    Message = $"Got Token: {token?.Split('.').Length==3}",
+                    Source = "Dominisoft.Nokates.Core"
+                });
+                
                 var parts = path.Split("/").ToList();
                 var index = parts.IndexOf("Nokates") - 1;
                 name = parts[index];
