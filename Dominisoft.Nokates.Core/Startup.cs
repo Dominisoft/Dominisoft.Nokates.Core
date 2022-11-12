@@ -54,11 +54,13 @@ namespace Dominisoft.Nokates.Core
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseRouting();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
-
+            
             var urls = app.ServerFeatures.Get<IServerAddressesFeature>().Addresses;
             BaseAddressUrl = urls.FirstOrDefault();
             Console.WriteLine($"Hosting at {BaseAddressUrl}");

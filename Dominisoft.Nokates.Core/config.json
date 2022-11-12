@@ -1,6 +1,10 @@
 {
   "MetricsConnectionString": "Data Source=Localhost;User ID=Microservice;Password=Password;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False",
+  "AuthenticationUrl": "http://localhost/Identity/Authentication",
   "AllowPassthroughOnUnknownEndpoints": "false",
-  "ServiceAccountUsername": "ServiceLogin",
-  "ServiceAccountPassword": "serviceAccountPassword"
+  "ServiceUsername": "ServiceLogin",
+  "ServicePassword": "ServicePassword",
+  "JwtKey": "my_secret_key_12345",
+  "JwtIssuer": "http://mysite.com",
+  "IconPath": "./Icon.png"
 }
