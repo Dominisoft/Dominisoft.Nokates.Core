@@ -69,8 +69,8 @@ namespace Dominisoft.Nokates.Core.Infrastructure
             return new Dictionary<string, List<string>>().UnionValues(groups);
         }
 
-        private static TReturn Get<TReturn>(string path)
-            => HttpHelper.Get<TReturn>(path,ConfigurationValues.Token);
+        private static TReturn Get<TReturn>(string path) where TReturn : class,new() 
+            => HttpHelper.Get<TReturn>(path,ConfigurationValues.Token).Object??new TReturn();
 
         internal static List<string> GetApplicationStatusPagePaths(string root)
         {
@@ -92,7 +92,7 @@ namespace Dominisoft.Nokates.Core.Infrastructure
             var sites = serverManager.Sites;
             var maxCount = sites.Select(s => s.Applications.Count).Max();
             var site = sites.FirstOrDefault(s => s.Applications.Count == maxCount);
-            return site.Name;
+            return site?.Name;
 
         }
         internal static string[] GetServicePaths()

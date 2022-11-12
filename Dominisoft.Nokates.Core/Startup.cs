@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Timers;
 using Dominisoft.Nokates.Common.Infrastructure.Extensions;
+using Dominisoft.Nokates.Common.Infrastructure.Helpers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server.Features;
@@ -46,7 +47,9 @@ namespace Dominisoft.Nokates.Core
         private static void OnTimedEvent(Object source, ElapsedEventArgs e)
         {
             Console.WriteLine("The Elapsed event was raised at {0:HH:mm:ss.fff}", e.SignalTime);
-            new HttpClient().GetAsync(BaseAddressUrl);
+            
+            var token = "";
+            HttpHelper.Get(BaseAddressUrl,token);
         }
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -69,8 +72,8 @@ namespace Dominisoft.Nokates.Core
                 endpoints.MapControllers();
             });
 
-            if (!Directory.Exists("../Publish/"))
-                Directory.CreateDirectory("../Publish");
+            //if (!Directory.Exists("../Publish/"))
+            //    Directory.CreateDirectory("../Publish");
         }
     }
 }
