@@ -7,7 +7,7 @@ on:
 jobs:
   build:
 
-    runs-on: self-hosted
+    runs-on: [ self-hosted, Windows, devops ]
     steps:   
     - uses: actions/checkout@v2
     - uses: FranzDiebold/github-env-vars-action@v2.7.0
