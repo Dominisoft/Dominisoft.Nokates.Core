@@ -1,6 +1,6 @@
 {
   "MetricsConnectionString": "Data Source=Localhost;User ID=Microservice;Password=Password;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False",
-  "AuthenticationUrl": "http://localhost/Identity/Authentication",
+  "AuthenticationUrl": "http://DevAppServer/Identity/Authentication",
   "AllowPassthroughOnUnknownEndpoints": "false",
   "ServiceUsername": "ServiceLogin",
   "ServicePassword": "ServicePassword",

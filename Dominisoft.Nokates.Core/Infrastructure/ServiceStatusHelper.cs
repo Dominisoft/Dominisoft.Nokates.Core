@@ -13,25 +13,36 @@ namespace Dominisoft.Nokates.Core.Infrastructure
     public static class ServiceStatusHelper
     {
         public static string SiteName;
+        private static readonly Dictionary<string, CacheItem> _cachedStatuses = new Dictionary<string, CacheItem>();
         public static List<ServiceStatus> GetServices(string root)
         {
             var paths = GetApplicationStatusPagePaths(root);
             return paths.Select(GetStatus).ToList();
         }
 
-
         public static ServiceStatus GetStatus(string path)
+            => GetStatus(path,true);
+
+        public static ServiceStatus GetStatus(string path, bool useCache)
         {
             var name = "";
             try
             {
-                var token = ConfigurationValues.Token;
-                StatusValues.EventLog.Add(new LogEntry
+                if(useCache)
+                if (_cachedStatuses.ContainsKey(path))
                 {
-                    Date = DateTime.Now,
-                    Message = $"Got Token: {token?.Split('.').Length==3}",
-                    Source = "Dominisoft.Nokates.Core"
-                });
+                    var cachedItem = _cachedStatuses[path];
+                  //  if (cachedItem.CachedTime > DateTime.Now.AddMinutes(-5) && cachedItem.CachedTime < DateTime.Now.AddSeconds(5))
+                        return cachedItem.Status;
+                }
+
+                //var token = ConfigurationValues.Token;
+                //StatusValues.EventLog.Add(new LogEntry
+                //{
+                //    Date = DateTime.Now,
+                //    Message = $"Got Token: {token?.Split('.').Length==3}",
+                //    Source = "Dominisoft.Nokates.Core"
+                //});
                 
                 var parts = path.Split("/").ToList();
                 var index = parts.IndexOf("Nokates") - 1;
@@ -40,6 +51,20 @@ namespace Dominisoft.Nokates.Core.Infrastructure
                 result.Uri = path;
                 if (result.Name == null)
                     throw new Exception("Failed to get service status");
+                if (!useCache) return result;
+
+                if (!_cachedStatuses.ContainsKey(path))
+                {
+                    var cacheItem = new CacheItem(result);
+                    cacheItem.ItemExpired += (s, e) =>
+                    {
+                        var item = (CacheItem)s;
+                        var path = item.Path;
+                        _cachedStatuses.Remove(path);
+
+                    };
+                }
+
                 return result;
             }
             catch (Exception e)
@@ -52,14 +77,14 @@ namespace Dominisoft.Nokates.Core.Infrastructure
                 });
                 Console.WriteLine(e);
             }
-
-
-            return new ServiceStatus
+            var offlineResult = new ServiceStatus
             {
                 IsOnline = false,
                 Name = name,
                 Uri = path,
             };
+
+            return offlineResult;
         }
 
         public static Dictionary<string, List<string>> GetGroups(string root)
