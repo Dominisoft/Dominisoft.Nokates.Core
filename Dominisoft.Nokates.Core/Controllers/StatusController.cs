@@ -19,15 +19,9 @@ namespace Dominisoft.Nokates.Core.Controllers
         public ActionResult<ServiceStatus[]> GetAllServiceStatuses()
         {
             var root = AppHelper.GetRootUri();
-            var paths = ServiceStatusHelper.GetApplicationStatusPagePaths(root);
-            var results = new List<ServiceStatus>();
-            foreach (var path in paths)
-            {
-                var status = ServiceStatusHelper.GetStatus(path);
-                results.Add(status);
-            }
+            return ServiceStatusHelper.GetServices(root).ToArray();
 
-            return results.ToArray();
+
         }
         [HttpGet("EndpointGroups")]
         [EndpointGroup("System Admin")]
